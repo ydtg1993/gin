@@ -1,0 +1,17 @@
+app:
+  name: MyGoApp
+  version: 1.0
+  host: localhost
+
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  charset: utf8mb4
+  username: root
+  password: 123456
+  database: dm
+  timeout: 60s
+  max_idle_num: 10
+  max_open_num: 20
+  connect_lifetime: 5 #min
+

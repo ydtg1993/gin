@@ -1,12 +1,11 @@
 package router
 
 import (
-	"read/controller"
-
 	"github.com/gin-gonic/gin"
+	"xo/controller"
 )
 
-func ApiRouter(g *gin.Engine) *gin.Engine{
+func ApiRouter(g *gin.Engine) *gin.Engine {
 	g.Use(gin.Recovery())
 	api := g.Group("/api")
 	{

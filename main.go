@@ -2,15 +2,11 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"read/core"
-	"read/middleware"
-	"read/router"
 	"time"
+	_ "xo/core"
+	"xo/middleware"
+	"xo/router"
 )
-
-func init()  {
-	core.Env()
-}
 
 func main() {
 	gin.SetMode("debug")
@@ -22,6 +18,5 @@ func main() {
 		middleware.RequestDataSizeMiddleware(1024),
 	)
 	g = router.ApiRouter(g)
-
 	g.Run(":8080")
 }
