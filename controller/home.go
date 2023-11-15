@@ -2,11 +2,16 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
-	"time"
+	"net/http"
 )
 
-
 func Index(c *gin.Context) {
-	time.Sleep(10*time.Second)
 	SendResponse(c, 0, "success", nil)
+}
+
+func Web(c *gin.Context) {
+	data := gin.H{
+		"Title": "Hello, Gin!",
+	}
+	c.HTML(http.StatusOK, "example.html", data)
 }
