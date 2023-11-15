@@ -39,5 +39,5 @@ func init() {
 	// Set maximum idle connections
 	sqlDB.SetMaxIdleConns(Config.GetInt("mysql.max_idle_num"))
 	// Set connection's maximum reusable time
-	sqlDB.SetConnMaxLifetime(time.Duration(Config.GetInt("mysql.connect_lifetime")) * time.Minute)
+	sqlDB.SetConnMaxLifetime(Config.GetDuration("mysql.connect_lifetime") * time.Minute)
 }
