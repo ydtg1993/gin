@@ -2,15 +2,22 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
+	"time"
 	"xo/controller"
+	"xo/middleware"
 )
 
 func WebRouter(g *gin.Engine) *gin.Engine {
 	g.LoadHTMLGlob("templates/*")
-	g.Use(gin.Recovery())
-	api := g.Group("/web")
+	route := g.Group("/web")
 	{
-		api.GET("/home", controller.Web)
+		route.Use(
+			gin.Logger(),
+			gin.Recovery(),
+			middleware.ConcurrencyLimiterMiddleware(1024),
+			middleware.RequestTimeoutMiddleware(30*time.Second),
+			middleware.RequestDataSizeMiddleware(1024))
+		route.GET("/home", controller.Web)
 	}
 
 	return g

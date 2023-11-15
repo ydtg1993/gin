@@ -2,14 +2,21 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
+	"time"
 	"xo/controller"
+	"xo/middleware"
 )
 
 func ApiRouter(g *gin.Engine) *gin.Engine {
-	g.Use(gin.Recovery())
-	api := g.Group("/api")
+	route := g.Group("/api")
 	{
-		api.GET("/home", controller.Index)
+		route.Use(
+			gin.Logger(),
+			gin.Recovery(),
+			middleware.ConcurrencyLimiterMiddleware(1024),
+			middleware.RequestTimeoutMiddleware(30*time.Second),
+			middleware.RequestDataSizeMiddleware(1024))
+		route.GET("/home", controller.Index)
 	}
 
 	return g
