@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"time"
 	_ "xo/core"
 	"xo/router"
 )

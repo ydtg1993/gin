@@ -22,3 +22,6 @@ redis:
   pool_size: 10
   timeout: 30
 
+template:
+  dirname: cache
+  expire: 60 #min

@@ -16,7 +16,8 @@ func WebRouter(g *gin.Engine) *gin.Engine {
 			gin.Recovery(),
 			middleware.ConcurrencyLimiterMiddleware(1024),
 			middleware.RequestTimeoutMiddleware(30*time.Second),
-			middleware.RequestDataSizeMiddleware(1024))
+			middleware.RequestDataSizeMiddleware(1024),
+			middleware.CacheHTMLMiddleware())
 		route.GET("/home", controller.Web)
 	}
 
