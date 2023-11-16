@@ -23,5 +23,5 @@ redis:
   timeout: 30
 
 template:
-  dirname: cache
-  expire: 60 #min
+  cache_dirname: cache
+  cache_expire: 60 #min

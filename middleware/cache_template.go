@@ -40,7 +40,7 @@ type CacheEntry struct {
 // CacheHTMLMiddleware is a Gin middleware that caches HTML pages to a cache directory
 // and serves the cached page on subsequent requests with an expiration time.
 func CacheHTMLMiddleware() gin.HandlerFunc {
-	cacheDir := core.Config.GetString("template.dirname")
+	cacheDir := core.Config.GetString("template.cache_dirname")
 	return func(c *gin.Context) {
 		// Generate a unique cache key based on the request path
 		cacheKey := strings.Replace(c.Request.URL.Path, "/", "_", -1)
@@ -60,6 +60,15 @@ func CacheHTMLMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		defer func() {
+			if r := recover(); r != nil {
+				// Handle panic during c.Next(): return an error page
+				c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+					"title": core.Config.GetString("app.name"),
+					"error": "page cannot be found"})
+				c.Abort()
+			}
+		}()
 		// If not cached or expired, proceed with the request and cache the HTML page afterward
 		c.Next()
 
@@ -97,7 +106,7 @@ func writeCacheEntry(cachePath, content string) error {
 
 	entry := CacheEntry{
 		Content:   template.HTML(content),
-		Timestamp: time.Now().Add(core.Config.GetDuration("template.expire") * time.Minute),
+		Timestamp: time.Now().Add(core.Config.GetDuration("template.cache_expire") * time.Minute),
 	}
 
 	entryJSON, err := json.Marshal(entry)
