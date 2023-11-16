@@ -9,6 +9,7 @@ import (
 
 func WebRouter(g *gin.Engine) *gin.Engine {
 	g.LoadHTMLGlob("resources/templates/*")
+	g.Static("/static", "resources/static")
 	route := g.Group("/web")
 	{
 		route.Use(

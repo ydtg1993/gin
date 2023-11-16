@@ -63,9 +63,11 @@ func CacheHTMLMiddleware() gin.HandlerFunc {
 		defer func() {
 			if r := recover(); r != nil {
 				// Handle panic during c.Next(): return an error page
+				staticContent, _ := ioutil.ReadFile("resources/templates/static.html")
 				c.HTML(http.StatusInternalServerError, "error.html", gin.H{
-					"title": core.Config.GetString("app.name"),
-					"error": "page cannot be found"})
+					"title":  core.Config.GetString("app.name"),
+					"static": template.HTML(staticContent),
+					"error":  "page cannot be found"})
 				c.Abort()
 			}
 		}()
