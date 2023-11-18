@@ -66,7 +66,7 @@ func CacheHTMLMiddleware(timeout time.Duration) gin.HandlerFunc {
 				staticContent, _ := ioutil.ReadFile("resources/templates/static.html")
 				c.HTML(http.StatusInternalServerError, "error.html", gin.H{
 					"title":  core.Config.GetString("app.name"),
-					"static": template.HTML(staticContent),
+					"header": template.HTML(staticContent),
 					"error":  "page cannot be found"})
 				c.Abort()
 			}
