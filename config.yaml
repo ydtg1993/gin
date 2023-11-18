@@ -21,7 +21,3 @@ redis:
   db: 0
   pool_size: 10
   timeout: 30
-
-template:
-  cache_dirname: cache
-  cache_expire: 60 #min

@@ -3,7 +3,6 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"time"
-	"xo/controller"
 	"xo/middleware"
 )
 
@@ -16,7 +15,6 @@ func ApiRouter(g *gin.Engine) *gin.Engine {
 			middleware.ConcurrencyLimiterMiddleware(1024),
 			middleware.RequestTimeoutMiddleware(30*time.Second),
 			middleware.RequestDataSizeMiddleware(1024))
-		route.GET("/home", controller.Index)
 	}
 
 	return g
