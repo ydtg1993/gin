@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"html/template"
 	"io/ioutil"
 	"net/http"
@@ -11,9 +12,6 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
-	"xo/core"
-
-	"github.com/gin-gonic/gin"
 )
 
 // CustomResponseWriter is a custom response writer that captures the response body.
@@ -44,6 +42,7 @@ func CacheHTMLMiddleware(timeout time.Duration) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Generate a unique cache key based on the request path
 		cacheKey := strings.Replace(c.Request.URL.Path, "/", "_", -1)
+		cacheKey = strings.TrimLeft(cacheKey, "_")
 		cachePath := filepath.Join(cacheDir, cacheKey+".html")
 
 		// Create a custom response writer to capture the response body
@@ -60,17 +59,6 @@ func CacheHTMLMiddleware(timeout time.Duration) gin.HandlerFunc {
 			return
 		}
 
-		defer func() {
-			if r := recover(); r != nil {
-				// Handle panic during c.Next(): return an error page
-				staticContent, _ := ioutil.ReadFile("resources/templates/static.html")
-				c.HTML(http.StatusInternalServerError, "error.html", gin.H{
-					"title":  core.Config.GetString("app.name"),
-					"header": template.HTML(staticContent),
-					"error":  "page cannot be found"})
-				c.Abort()
-			}
-		}()
 		// If not cached or expired, proceed with the request and cache the HTML page afterward
 		c.Next()
 

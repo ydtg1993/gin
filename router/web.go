@@ -3,27 +3,23 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"time"
 	"xo/controller"
-	"xo/middleware"
 )
 
 func WebRouter(g *gin.Engine) *gin.Engine {
 	g.LoadHTMLGlob("resources/templates/*")
 	g.Static("/static", "resources/static")
 	g.Static("/img", "resources/img")
-	route := g.Group("/web")
+	route := g.Group("/")
 	{
-		route.Use(
-			gin.Logger(),
-			gin.Recovery(),
-			middleware.ConcurrencyLimiterMiddleware(1024),
-			middleware.RequestTimeoutMiddleware(30*time.Second),
-			middleware.RequestDataSizeMiddleware(1024))
-		route.GET("/home", controller.Home)
-		route.GET("/home:string", func(c *gin.Context) {
-			c.Redirect(http.StatusTemporaryRedirect, "/web/home")
+		route.GET("/main.html", controller.Home)
+		route.GET("/", func(c *gin.Context) {
+			c.Redirect(http.StatusTemporaryRedirect, "/main.html")
 		})
+		route.GET("/main.html:string|/", func(c *gin.Context) {
+			c.Redirect(http.StatusTemporaryRedirect, "/main.html")
+		})
+		route.GET("/video/:id/detail.html", controller.Video)
 	}
 
 	return g
