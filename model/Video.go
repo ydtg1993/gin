@@ -25,7 +25,7 @@ func (Video) TableName() string {
 	return "video"
 }
 
-func GetFormattedLabelList(vid uint) string {
+func GetFormattedLabelList(vid, lid uint) string {
 	var labelList strings.Builder
 
 	var videoLabelAss []VLAss
@@ -43,6 +43,10 @@ func GetFormattedLabelList(vid uint) string {
 	core.Mysql.Where("id IN ?", labelIds).Order("sort desc").Find(&labels)
 
 	for _, label := range labels {
+		if label.ID == lid {
+			labelList.WriteString(fmt.Sprintf(`<li><a class="green" href="%stag/%d/index.html">%s</a></li>`, core.Config.GetString("app.host"), label.ID, label.Name))
+			continue
+		}
 		labelList.WriteString(fmt.Sprintf(`<li><a href="%stag/%d/index.html">%s</a></li>`, core.Config.GetString("app.host"), label.ID, label.Name))
 	}
 	return labelList.String()

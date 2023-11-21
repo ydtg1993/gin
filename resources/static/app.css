@@ -274,6 +274,12 @@ h1{
     color: #ccc;
 }
 
+#tag-nav a.green,#tag-nav a.green:hover{
+    background: linear-gradient(180deg, #61d76d 0, #005c10 59%, #00ff18 100%);
+    border: 1px solid #00740b;
+    box-shadow: inset 0 3px 9px #148b1f, inset 0 3px 12px #23a92f, inset 0 15px 9px #328f3b, inset 0 3px 3px 0 #18e32b, 0 1px 3px rgb(16 16 16 / 66%);
+}
+
 @media only screen and  (max-width: 640px) {
     .homepage-text{
         display: none;

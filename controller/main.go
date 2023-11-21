@@ -31,7 +31,7 @@ func Home(c *gin.Context) {
 `, video.ID, "https://sta.anicdn.com/playerImg/8.jpg", video.Title)
 		video_temp.WriteString(temp)
 	}
-	labels := model.GetFormattedLabelList(0)
+	labels := model.GetFormattedLabelList(0, 0)
 	data := gin.H{
 		"Title":      "Hello, Gin!",
 		"vlist":      template.HTML(video_temp.String()),
@@ -41,7 +41,7 @@ func Home(c *gin.Context) {
 }
 
 func Tag(c *gin.Context) {
-	id := c.Param("id")
+	id, _ := strconv.Atoi(c.Param("id"))
 	page, _ := strconv.Atoi(c.Query("p"))
 	limit := 24
 	var vlass []model.VLAss
@@ -52,7 +52,7 @@ func Tag(c *gin.Context) {
 		Offset(page * limit).
 		Limit(limit).
 		Find(&vlass)
-	if result.Error != nil {
+	if result.Error != nil || id < 0 || page < 0 {
 		c.Redirect(http.StatusTemporaryRedirect, "/404.html")
 		return
 	}
@@ -69,10 +69,11 @@ func Tag(c *gin.Context) {
 `, vl.Video.ID, "https://sta.anicdn.com/playerImg/8.jpg", vl.Video.Title)
 		video_temp.WriteString(temp)
 	}
-
+	labels := model.GetFormattedLabelList(0, uint(id))
 	data := gin.H{
-		"Title": "- tag",
-		"vlist": template.HTML(video_temp.String()),
+		"Title":      "- tag",
+		"label_list": template.HTML(labels),
+		"vlist":      template.HTML(video_temp.String()),
 	}
 	c.HTML(http.StatusOK, "tag.html", data)
 }
@@ -137,7 +138,7 @@ func Video(c *gin.Context) {
 		}
 	}
 
-	labels := model.GetFormattedLabelList(video.ID)
+	labels := model.GetFormattedLabelList(video.ID, 0)
 
 	data := gin.H{
 		"Title":      "Hello, Gin!",
