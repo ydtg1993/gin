@@ -109,6 +109,14 @@ h1{
     cursor: pointer;
 }
 
+.search_tips{
+    margin: 5px;
+    color: #787878;
+}
+.search_tips>span{
+    color:black;
+}
+
 .history{
     width: 70px;
 }

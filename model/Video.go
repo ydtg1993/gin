@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
 	"time"
 	"xo/core"
@@ -42,7 +43,19 @@ func GetFormattedLabelList(vid uint) string {
 	core.Mysql.Where("id IN ?", labelIds).Order("sort desc").Find(&labels)
 
 	for _, label := range labels {
-		labelList.WriteString(fmt.Sprintf(`<li><a href="%stag/%d">%s</a></li>`, core.Config.GetString("app.host"), label.ID, label.Name))
+		labelList.WriteString(fmt.Sprintf(`<li><a href="%stag/%d/index.html">%s</a></li>`, core.Config.GetString("app.host"), label.ID, label.Name))
 	}
 	return labelList.String()
+}
+
+func GetRandomVideos(limit int) (videos []Video) {
+	var totalRecords int64
+	core.Mysql.Model(&Video{}).Count(&totalRecords)
+
+	// Generate a random offset
+	rand.Seed(time.Now().UnixNano())
+	randomOffset := rand.Intn(int(totalRecords - int64(limit) + 1))
+
+	core.Mysql.Offset(randomOffset).Limit(limit).Find(&videos)
+	return videos
 }

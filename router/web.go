@@ -18,6 +18,8 @@ func WebRouter(g *gin.Engine) *gin.Engine {
 		})
 		//route.GET("/video/:id/detail.html", middleware.CacheHTMLMiddleware(5*time.Minute) ,controller.Video)
 		route.GET("/video/:id/detail.html", controller.Video)
+		route.GET("/tag/:id/index.html", controller.Tag)
+		route.GET("/search", controller.Search)
 	}
 
 	return g
