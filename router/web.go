@@ -16,9 +16,7 @@ func WebRouter(g *gin.Engine) *gin.Engine {
 		route.GET("/", func(c *gin.Context) {
 			c.Redirect(http.StatusTemporaryRedirect, "/main.html")
 		})
-		route.GET("/main.html:string|/", func(c *gin.Context) {
-			c.Redirect(http.StatusTemporaryRedirect, "/main.html")
-		})
+		//route.GET("/video/:id/detail.html", middleware.CacheHTMLMiddleware(5*time.Minute) ,controller.Video)
 		route.GET("/video/:id/detail.html", controller.Video)
 	}
 

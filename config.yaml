@@ -1,7 +1,7 @@
 app:
   name: MyGoApp
   version: 1.0
-  host: localhost
+  host: http://127.0.0.1:8081/
 
 mysql:
   host: 127.0.0.1
@@ -9,7 +9,7 @@ mysql:
   charset: utf8mb4
   username: root
   password: 123456
-  database: dm
+  database: pav
   timeout: 60s
   max_idle_num: 10
   max_open_num: 20

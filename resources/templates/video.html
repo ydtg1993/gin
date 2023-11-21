@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="/img/ape.ico" />
+    <link rel="icon" href="/img/ape.ico"/>
     <title>{{.Title}}</title>
-    {{.header}}
+    <link rel="stylesheet" media="all" href="/static/app.css">
+    <script src="/static/app.js"></script>
+    <link href="https://unpkg.com/video.js@7.0.0/dist/video-js.css" rel="stylesheet">
+    <script src="https://unpkg.com/video.js@7.0.0/dist/video.min.js"></script>
+    <script src="/static/videojs-contrib-hls.min.js"></script>
 </head>
 <body>
 <div id="root" class="middle-flex">
@@ -29,57 +33,46 @@
         </div>
     </div>
     <main class="middle-flex">
-        <div class="center box">
-
-        </div>
-    </main>
-    <div class="middle-flex">
-        <div class="center">
-            <div class="homepage-text" style="visibility: hidden">
-                <h1 class="homepage-title">Pinay Sex Scandals - Kayatan Kayatsex Katorsex</h1>
-                <p class="archive-description"></p>
-                <h2>Bookmark the Apebt website to have regular access to the XNXX porn videos</h2>
-                Are you an avid fan of erotic content? Then congrats, you have come to the right website as we have lots
-                of porn videos in HD quality. But not only that. Our compelling catalog comprises many amateur Pinay sex
-                videos captured by the first person or a hidden camera. It's always a pleasure to watch this content as
-                it pictures people's authentic emotions and feelings during sexual intercourse. However, if you're more
-                about porn in the highest resolution with the professional actors and a pre-readied scenario, we have
-                got you covered with this too. Browse our HD porn videos to enjoy professionally casted content that
-                features hot babies with huge boobs and tight pussy to sporty guys with long dicks.
-
-                Our website is a boon for those who prefer watching porn with Pinay hotties. Filipinas are considered
-                one of the most attractive ladies on Earth. They have beautiful lean bodies, big eyes, and long dark
-                hair. According to recent surveys, this women's profile is one of the favorites among men worldwide.
-                Just imagine how existing it is to take part in a true Filipino sex scandal when you’re getting screwed
-                with your attractive partner while she obediently does whatever you say. We bet you've dreamt about it
-                many times. And now, with the help of the Apebt website, you can become a hidden spectator of somebody's
-                intercourse in a few mouse clicks.
-                <h2>Katorsex Pinay sex videos you will love to jerk off on</h2>
-                Are you looking for some engaging video content to ease yourself? Get ready to be amazed by our endless
-                catalog of Pinay sex scandals that will jazz you up in an instant. These videos are made for those who
-                want to pamper themselves with uncensored sex scenes. You never know what is waiting for you in our porn
-                sex scandal collection. There might be self videos with naughty Filippine chicks or hardcore scenes of
-                group sex. Everything you could ever imagine becomes real at Apebt.
-
-                To make your navigation through a website even more comfortable, we offer you to use our handy search
-                bar. Just input a query, and the list of suitable videos will be offered to you in a matter of seconds.
-                Our homepage features the recently uploaded porn content. That means you can enjoy the freshest Kayatsex
-                Pinay sex videos without any further ado.
-
-                If you want to stay updated on the best erotic content on the web, make sure to bookmark our site. Now
-                all the hottest sex videos are gathered in one place for your utmost convenience and unmatched
-                experience. The best part of it is that you can watch them free of charge.
-
-                Do you want to upload your home video or advertise on our platform? Make sure to drop us a line at <a
-                        href="mailto:contactxnxxcom@gmail.com">contactxnxxcom@gmail.com</a>. We work around the clock to
-                make you happy about your user experience.
+        <div class="center middle-flex" id="video-content">
+            <div class="video-box">
+                <h1>{{.Title}}</h1>
+                <video id="video" class="video-js vjs-default-skin vjs-big-play-centered" fullscreen playsinline
+                       controls
+                       preload="auto"
+                       data-setup='{ "aspectRatio":"640:360", "playbackRates": [1, 1.5, 2] }'>
+                </video>
+                <ul id="tag-nav" class="scroll">{{.label_list}}</ul>
+            </div>
+            <div>
+                <h3>recommend videos</h3>
+                <div id="vlist">
+                    {{.vlist}}
+                </div>
             </div>
         </div>
-    </div>
+    </main>
     <div class="middle-flex">
         <div class="center"></div>
     </div>
 </div>
 </body>
+<script>
+    const player = videojs('video', {
+        sources: [{
+            src: {{.url}},
+            type: 'application/x-mpegURL',
+        }],
+        autoplay: false
+    }, function onPlayerReady() {
+        videojs.log('播放器准备好了!');
+    });
+    document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'hidden') {
+            player.pause();
+        } else {
+            player.play();
+        }
+    });
+</script>
 {{.footer}}
 </html>
