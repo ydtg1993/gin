@@ -2,6 +2,8 @@ package middleware
 
 import (
 	"bytes"
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -35,15 +37,19 @@ type cacheEntry struct {
 	Timestamp time.Time     `json:"timestamp"`
 }
 
-// CacheHTMLMiddleware is a Gin middleware that caches HTML pages to a cache directory
-// and serves the cached page on subsequent requests with an expiration time.
-func CacheHTMLMiddleware(timeout time.Duration) gin.HandlerFunc {
+func CacheHTMLMiddleware(timeout time.Duration, params ...string) gin.HandlerFunc {
 	cacheDir := "cache"
 	return func(c *gin.Context) {
-		// Generate a unique cache key based on the request path
-		cacheKey := strings.Replace(c.Request.URL.Path, "/", "_", -1)
-		cacheKey = strings.TrimLeft(cacheKey, "_")
-		cachePath := filepath.Join(cacheDir, cacheKey+".html")
+		domain := c.Request.Host
+		path := c.Request.URL.Path
+		// Get the full URL without query string
+		fullURLWithoutQuery := fmt.Sprintf("%s%s", domain, path)
+		queryParams := c.Request.URL.Query()
+		for _, param := range params {
+			fullURLWithoutQuery += "-" + queryParams.Get(param)
+		}
+		hash := md5.Sum([]byte(fullURLWithoutQuery))
+		cachePath := filepath.Join(cacheDir, hex.EncodeToString(hash[:]))
 
 		// Create a custom response writer to capture the response body
 		w := &responseWriter{c.Writer, nil}
