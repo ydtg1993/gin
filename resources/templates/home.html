@@ -45,11 +45,12 @@
             <div id="vlist">
                 {{.vlist}}
             </div>
+            <div id="page" style="position: absolute;bottom: 10px;"></div>
         </div>
     </main>
     <div class="middle-flex">
         <div class="center">
-            <div class="homepage-text" style="visibility: hidden">
+            <div class="homepage-text">
                 <h1 class="homepage-title">Pinay Sex Scandals - Kayatan Kayatsex Katorsex</h1>
                 <p class="archive-description"></p>
                 <h2>Bookmark the Apebt website to have regular access to the XNXX porn videos</h2>
@@ -95,4 +96,9 @@
     </div>
 </div>
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        new Pagination(document.getElementById("page"),{{.page_count}}, {{.page}}).format({{.url}}).make();
+    });
+</script>
 </html>

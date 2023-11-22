@@ -15,28 +15,32 @@ import (
 
 func Home(c *gin.Context) {
 	var videos []model.Video
-	result := core.Mysql.Order("created_at desc").Limit(32).Find(&videos)
+	page, _ := strconv.Atoi(c.Query("page"))
+	limit := 24
+	if page < 1 {
+		page = 1
+	}
+	result := core.Mysql.Order("created_at desc").
+		Offset((page - 1) * limit).
+		Limit(limit).
+		Find(&videos)
 	if result.Error != nil {
 		c.Redirect(http.StatusNotFound, "/404.html")
 		return
 	}
+	var count int64
+	core.Mysql.Model(model.VLAss{}).Count(&count)
+	page_count := math.Ceil(float64(count) / float64(limit))
+
 	var video_temp strings.Builder
-	for _, video := range videos {
-		temp := fmt.Sprintf(`
-<article>
-<a href="/video/%d/detail.html" class="vbox">
-	<div class="cover"><img decoding="async" src="%s"/></div>
-	<header class="trim_text">
-		<span>%s</span>
-	</header>
-</a></article>
-`, video.ID, "https://sta.anicdn.com/playerImg/8.jpg", video.Title)
-		video_temp.WriteString(temp)
-	}
+	fillVideoList(&video_temp, videos)
 	labels := model.GetFormattedLabelList(0, 0)
 	data := gin.H{
 		"vlist":      template.HTML(video_temp.String()),
 		"label_list": template.HTML(labels),
+		"url":        core.Config.GetString("app.host") + "main.html?page=:page",
+		"page":       page,
+		"page_count": page_count,
 	}
 	c.HTML(http.StatusOK, "home.html", data)
 }
@@ -89,13 +93,13 @@ func Tag(c *gin.Context) {
 	for _, vl := range vlass {
 		temp := fmt.Sprintf(`
 <article>
-<a href="/video/%d/detail.html" class="vbox">
-	<div class="cover"><img decoding="async" src="%s"/></div>
+<a href="/video/%d/detail.html" aria-label="%s" class="vbox">
+	<div class="cover"><img decoding="async" src="%s" alt="%s" title="%s"/></div>
 	<header class="trim_text">
 		<span>%s</span>
 	</header>
 </a></article>
-`, vl.Video.ID, "https://sta.anicdn.com/playerImg/8.jpg", vl.Video.Title)
+`, vl.Video.ID, vl.Video.Title, "https://sta.anicdn.com/playerImg/8.jpg", vl.Video.Title, vl.Video.Title, vl.Video.Title)
 		video_temp.WriteString(temp)
 	}
 	labels := model.GetFormattedLabelList(0, uint(id))
@@ -126,20 +130,9 @@ func Search(c *gin.Context) {
 	var video_temp strings.Builder
 	result_total := len(videos)
 	if result_total == 0 {
-		videos = model.GetRandomVideos(4)
+		videos = model.GetRandomVideos(12)
 	}
-	for _, video := range videos {
-		temp := fmt.Sprintf(`
-<article>
-<a href="/video/%d/detail.html" class="vbox">
-	<div class="cover"><img decoding="async" src="%s"/></div>
-	<header class="trim_text">
-		<span>%s</span>
-	</header>
-</a></article>
-`, video.ID, "https://sta.anicdn.com/playerImg/8.jpg", video.Title)
-		video_temp.WriteString(temp)
-	}
+	fillVideoList(&video_temp, videos)
 
 	data := gin.H{
 		"keywords": keywords,
@@ -160,20 +153,7 @@ func Video(c *gin.Context) {
 	var videos []model.Video
 	result = core.Mysql.Order("created_at desc").Limit(12).Find(&videos)
 	var video_temp strings.Builder
-	if result.Error == nil {
-		for _, video := range videos {
-			temp := fmt.Sprintf(`
-<article>
-<a href="/video/%d/detail.html" class="vbox">
-	<div class="cover"><img decoding="async" src="%s"/></div>
-	<header class="trim_text">
-		<span>%s</span>
-	</header>
-</a></article>
-`, video.ID, "https://sta.anicdn.com/playerImg/8.jpg", video.Title)
-			video_temp.WriteString(temp)
-		}
-	}
+	fillVideoList(&video_temp, videos)
 
 	labels := model.GetFormattedLabelList(video.ID, 0)
 
@@ -184,4 +164,19 @@ func Video(c *gin.Context) {
 		"label_list": template.HTML(labels),
 	}
 	c.HTML(http.StatusOK, "video.html", data)
+}
+
+func fillVideoList(video_temp *strings.Builder, videos []model.Video) {
+	for _, video := range videos {
+		temp := fmt.Sprintf(`
+<article>
+<a href="/video/%d/detail.html" aria-label="%s" class="vbox">
+	<div class="cover"><img decoding="async" src="%s" alt="%s" title="%s"/></div>
+	<header class="trim_text">
+		<span>%s</span>
+	</header>
+</a></article>
+`, video.ID, video.Title, "https://sta.anicdn.com/playerImg/8.jpg", video.Title, video.Title, video.Title)
+		video_temp.WriteString(temp)
+	}
 }
