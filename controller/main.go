@@ -35,7 +35,6 @@ func Home(c *gin.Context) {
 	}
 	labels := model.GetFormattedLabelList(0, 0)
 	data := gin.H{
-		"Title":      "Hello, Gin!",
 		"vlist":      template.HTML(video_temp.String()),
 		"label_list": template.HTML(labels),
 	}
@@ -55,6 +54,12 @@ func Tag(c *gin.Context) {
 		c.Redirect(http.StatusNotFound, "/404.html")
 		return
 	}
+	var Tag model.Label
+	result := core.Mysql.Where("id = ?", id).First(&Tag)
+	if result.Error != nil {
+		c.Redirect(http.StatusTemporaryRedirect, "/404.html")
+		return
+	}
 	query := core.Mysql.
 		Preload("Video").
 		Joins("JOIN video ON video.id = video_label_ass.video_id").
@@ -69,7 +74,7 @@ func Tag(c *gin.Context) {
 		query = query.Order("video.like desc").Order("video.created_at desc")
 	}
 
-	result := query.
+	result = query.
 		Offset((page - 1) * limit).
 		Limit(limit).
 		Find(&vlass)
@@ -95,7 +100,7 @@ func Tag(c *gin.Context) {
 	}
 	labels := model.GetFormattedLabelList(0, uint(id))
 	data := gin.H{
-		"Title":      core.Config.GetString("app.name"),
+		"Title":      Tag.Name,
 		"label_list": template.HTML(labels),
 		"vlist":      template.HTML(video_temp.String()),
 		"url":        core.Config.GetString("app.host") + "tag/" + strconv.Itoa(id) + "/index.html?page=:page",
@@ -137,7 +142,6 @@ func Search(c *gin.Context) {
 	}
 
 	data := gin.H{
-		"Title":    core.Config.GetString("app.name") + " - Search",
 		"keywords": keywords,
 		"total":    result_total,
 		"vlist":    template.HTML(video_temp.String()),
@@ -174,7 +178,7 @@ func Video(c *gin.Context) {
 	labels := model.GetFormattedLabelList(video.ID, 0)
 
 	data := gin.H{
-		"Title":      "Hello, Gin!",
+		"Title":      video.Title,
 		"url":        "https://xgct-video.vzcdn.net/4244a3d1-227f-467c-a5d9-d4209ea7e270/1280x720/video.m3u8",
 		"vlist":      template.HTML(video_temp.String()),
 		"label_list": template.HTML(labels),
