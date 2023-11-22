@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"html/template"
+	"math"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 	"xo/core"
@@ -42,20 +44,42 @@ func Home(c *gin.Context) {
 
 func Tag(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
-	page, _ := strconv.Atoi(c.Query("p"))
-	limit := 24
+	page, _ := strconv.Atoi(c.Query("page"))
+	sort := c.Query("sort")
+	limit := 2
 	var vlass []model.VLAss
-	result := core.Mysql.
+	if page < 1 {
+		page = 1
+	}
+	if id < 0 {
+		c.Redirect(http.StatusNotFound, "/404.html")
+		return
+	}
+	query := core.Mysql.
 		Preload("Video").
 		Joins("JOIN video ON video.id = video_label_ass.video_id").
-		Where("video_label_ass.label_id = ?", id).
-		Offset(page * limit).
+		Where("video_label_ass.label_id = ?", id)
+	if sort == "time" {
+		query = query.Order("video.created_at desc")
+	} else if sort == "like" {
+		query = query.Order("video.like desc")
+	} else if sort == "title" {
+		query = query.Order("video.title desc")
+	} else {
+		query = query.Order("video.like desc").Order("video.created_at desc")
+	}
+
+	result := query.
+		Offset((page - 1) * limit).
 		Limit(limit).
 		Find(&vlass)
-	if result.Error != nil || id < 0 || page < 0 {
+	if result.Error != nil || len(vlass) == 0 {
 		c.Redirect(http.StatusTemporaryRedirect, "/404.html")
 		return
 	}
+	var count int64
+	core.Mysql.Model(model.VLAss{}).Where("label_id = ?", id).Count(&count)
+	page_count := math.Ceil(float64(count) / float64(limit))
 	var video_temp strings.Builder
 	for _, vl := range vlass {
 		temp := fmt.Sprintf(`
@@ -71,15 +95,24 @@ func Tag(c *gin.Context) {
 	}
 	labels := model.GetFormattedLabelList(0, uint(id))
 	data := gin.H{
-		"Title":      "- tag",
+		"Title":      core.Config.GetString("app.name"),
 		"label_list": template.HTML(labels),
 		"vlist":      template.HTML(video_temp.String()),
+		"url":        core.Config.GetString("app.host") + "tag/" + strconv.Itoa(id) + "/index.html?page=:page",
+		"page":       page,
+		"page_count": page_count,
 	}
 	c.HTML(http.StatusOK, "tag.html", data)
 }
 
 func Search(c *gin.Context) {
 	keywords := c.Query("keywords")
+	re := regexp.MustCompile(`[!@#$%^&*()_+{}:“<>?,.\/;'\[\]\\|` + "`" + `~"'【】，。、，]+`)
+	keywords = re.ReplaceAllString(keywords, "")
+	if len(keywords) > 64 {
+		keywords = keywords[:64]
+	}
+
 	var videos []model.Video
 	result := core.Mysql.Where("title LIKE ?", "%"+keywords+"%").Limit(24).Find(&videos)
 	if result.Error != nil {
@@ -104,7 +137,7 @@ func Search(c *gin.Context) {
 	}
 
 	data := gin.H{
-		"Title":    "- Search",
+		"Title":    core.Config.GetString("app.name") + " - Search",
 		"keywords": keywords,
 		"total":    result_total,
 		"vlist":    template.HTML(video_temp.String()),

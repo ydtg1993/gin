@@ -93,6 +93,8 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             make() {
+                if(this.totalPages <= 1)return;
+                if(this.currentPage > this.totalPages || this.currentPage < 1)this.currentPage = 1;
                 let paginationContainer = document.createElement("ul");
                 paginationContainer.className = "dlp-pagination";
                 this.DOM.append(paginationContainer);
@@ -167,6 +169,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 this.button_dom = document.querySelector("#search>.search-button");
                 this.button_dom.addEventListener('click',()=>{
                     if(!this.input_dom.value)return;
+                    this.input_dom.value = this.input_dom.value.replace(/[!@#$%^&*()_+\{\}:“<>?,.\/;'\[\]\\|`~"\'【】！，。、]+/g, '');
+                    this.input_dom.value = this.input_dom.value.substring(0,64);
                     window.location.href = new URL(window.location.href).origin + "/search?keywords="+this.input_dom.value;
                 });
             }

@@ -108,7 +108,7 @@
 </body>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        new Pagination(document.getElementById("page"),20, 1).bindEvent((page)=>{alert(page)}).make();
+        new Pagination(document.getElementById("page"),{{.page_count}}, {{.page}}).format({{.url}}).make();
     });
 </script>
 </html>
