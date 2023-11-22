@@ -45,7 +45,7 @@ func Tag(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	page, _ := strconv.Atoi(c.Query("page"))
 	sort := c.Query("sort")
-	limit := 2
+	limit := 24
 	var vlass []model.VLAss
 	if page < 1 {
 		page = 1
