@@ -150,14 +150,16 @@ func Video(c *gin.Context) {
 	fillVideoList(&video_temp, videos)
 
 	labels := model.GetFormattedLabelList(video.ID, 0)
-	source := Encrypt(
+	source, _ := Encrypt(
 		"https://xgct-video.vzcdn.net/4244a3d1-227f-467c-a5d9-d4209ea7e270/1280x720/video.m3u8",
-		core.Config.GetString("app.secret"))
+		core.Config.GetString("app.hash"), core.Config.GetString("app.token"))
 	data := gin.H{
 		"Title":      video.Title,
-		"source":     source,
 		"vlist":      template.HTML(video_temp.String()),
 		"label_list": template.HTML(labels),
+		"source":     source,
+		"token":      core.Config.GetString("app.token"),
+		"hash":       core.Config.GetString("app.hash"),
 	}
 	c.HTML(http.StatusOK, "video.html", data)
 }

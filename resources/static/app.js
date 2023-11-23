@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     (function (w) {
         w.parseParams = function (uri, params) {
             let paramsArray = [];
@@ -77,24 +77,24 @@ document.addEventListener("DOMContentLoaded", function() {
                 this.currentPage = currentPage;
             }
 
-            visiblePageCount(page){
+            visiblePageCount(page) {
                 this.visiblePagesCount = page - 2
             }
 
-            bindEvent(func){
-                if (typeof func !== 'function')return this;
+            bindEvent(func) {
+                if (typeof func !== 'function') return this;
                 this.callback = func;
                 return this;
             }
 
-            format(url){
+            format(url) {
                 this.url = url;
                 return this;
             }
 
             make() {
-                if(this.totalPages <= 1)return;
-                if(this.currentPage > this.totalPages || this.currentPage < 1)this.currentPage = 1;
+                if (this.totalPages <= 1) return;
+                if (this.currentPage > this.totalPages || this.currentPage < 1) this.currentPage = 1;
                 let paginationContainer = document.createElement("ul");
                 paginationContainer.className = "dlp-pagination";
                 this.DOM.append(paginationContainer);
@@ -141,22 +141,22 @@ document.addEventListener("DOMContentLoaded", function() {
 
             renderButton(container, text, page) {
                 const p = document.createElement('li');
-                if (page === -1){
+                if (page === -1) {
                     p.className = "dlp-pagination-page skip";
-                }else if(this.currentPage === page && text !== '‹' && text !== '›'){
+                } else if (this.currentPage === page && text !== '‹' && text !== '›') {
                     p.className = "dlp-pagination-page current";
-                }else {
+                } else {
                     p.className = "dlp-pagination-page";
                 }
                 const a = document.createElement("a");
-                if(this.url && page !== -1) {
+                if (this.url && page !== -1) {
                     a.setAttribute('href', this.url.replace(":page", page));
-                }else {
-                    a.setAttribute('href',"javascript:void(0);");
+                } else {
+                    a.setAttribute('href', "javascript:void(0);");
                 }
                 a.innerText = text;
-                if (typeof this.callback === 'function'){
-                    a.addEventListener('click', ()=>this.callback(page));
+                if (typeof this.callback === 'function') {
+                    a.addEventListener('click', () => this.callback(page));
                 }
                 p.append(a);
                 container.appendChild(p);
@@ -167,35 +167,67 @@ document.addEventListener("DOMContentLoaded", function() {
             constructor() {
                 this.input_dom = document.querySelector("#search>input");
                 this.button_dom = document.querySelector("#search>.search-button");
-                this.button_dom.addEventListener('click',()=>{
-                    if(!this.input_dom.value)return;
+                this.button_dom.addEventListener('click', () => {
+                    if (!this.input_dom.value) return;
                     this.input_dom.value = this.input_dom.value.replace(/[!@#$%^&*()_+\{\}:“<>?,.\/;'\[\]\\|`~"\'【】！，。、]+/g, '');
-                    this.input_dom.value = this.input_dom.value.substring(0,64);
-                    window.location.href = new URL(window.location.href).origin + "/search?keywords="+this.input_dom.value;
+                    this.input_dom.value = this.input_dom.value.substring(0, 64);
+                    window.location.href = new URL(window.location.href).origin + "/search?keywords=" + this.input_dom.value;
                 });
             }
         };
         new w.search();
 
-        w.stream = class {
-            constructor(source) {
-                async function AESDecrypt(ciphertext, key) {
-                    try {
-                        const cipherText = Uint8Array.from(atob(ciphertext), c => c.charCodeAt(0));
-
-                        const importedKey = await crypto.subtle.importKey('raw', new TextEncoder().encode(key), 'AES-CBC', false, ['decrypt']);
-                        const decrypted = await crypto.subtle.decrypt({ name: 'AES-CBC', iv: cipherText.slice(0, 16) }, importedKey, cipherText.slice(16));
-
-                        // 减去 padding
-                        const paddingLength = decrypted[decrypted.length - 1];
-                        console.log(new TextDecoder().decode(decrypted.slice(0, -paddingLength)));
-                    } catch (err) {
-                        console.error('aes decrypt err:', err);
-                        return '';
-                    }
+        w.logger = class {
+            constructor() {
+                if (document.querySelector('meta[name="token"]') instanceof HTMLElement) {
+                    this.push().then(s => {
+                        const pl = videojs('video', {
+                            autoplay: false
+                        }, function onPlayerReady() {
+                            pl.src({
+                                src: s,
+                                type: 'application/x-mpegURL'
+                            });
+                        });
+                        document.addEventListener('visibilitychange', function () {
+                            if (document.visibilityState === 'hidden') {
+                                player.pause();
+                            } else {
+                                player.play();
+                            }
+                        });
+                    });
                 }
-                AESDecrypt(source, "hwWe\\mS2`kvu8,z/|hvop7^~)ZUgQhHT").then(plaintext => console.log('解密结果：', plaintext));
             }
-        }
+
+            push() {
+                const keyBuffer = crypto.subtle.importKey(
+                    'raw',
+                    new TextEncoder().encode(document.querySelector(".video-box").getAttribute("id")),
+                    {name: 'AES-CBC', length: 256},
+                    false,
+                    ['decrypt']
+                );
+
+                const ivBytes = new Uint8Array(16);
+                const decodedIV = new Uint8Array(Array.from(atob(document.querySelector('meta[name="token"]').getAttribute('content')), (c) => c.charCodeAt(0)));
+                ivBytes.set(decodedIV);
+                const ciphertextBytes = new Uint8Array(Array.from(atob(document.querySelector('meta[name="key"]').getAttribute('content')), (c) => c.charCodeAt(0)));
+
+                return keyBuffer
+                    .then((importedKey) =>
+                        crypto.subtle.decrypt(
+                            {name: 'AES-CBC', iv: ivBytes},
+                            importedKey,
+                            ciphertextBytes
+                        )
+                    )
+                    .then((decryptedBuffer) => {
+                        return new TextDecoder().decode(decryptedBuffer.slice(16));
+                    })
+                    .catch((error) => console.error(error));
+            }
+        };
+        new w.logger();
     })(window);
 });

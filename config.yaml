@@ -2,7 +2,8 @@ app:
   name: MyGoApp
   version: 1.0
   host: http://127.0.0.1:8081/
-  secret: hwWe\mS2`kvu8,z/|hvop7^~)ZUgQhHT
+  hash: EpDYiCD/2g4L2Id0nZKbcroQyRb0qDaf
+  token: 26e67818dfa848c2
 
 mysql:
   host: 127.0.0.1
