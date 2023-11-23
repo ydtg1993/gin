@@ -20,16 +20,13 @@ func Home(c *gin.Context) {
 	if page < 1 {
 		page = 1
 	}
-	result := core.Mysql.Order("created_at desc").
+	core.Mysql.Order("created_at desc").
 		Offset((page - 1) * limit).
 		Limit(limit).
 		Find(&videos)
-	if result.Error != nil {
-		c.Redirect(http.StatusNotFound, "/404.html")
-		return
-	}
+
 	var count int64
-	core.Mysql.Model(model.VLAss{}).Count(&count)
+	core.Mysql.Model(model.Video{}).Count(&count)
 	page_count := math.Ceil(float64(count) / float64(limit))
 
 	var video_temp strings.Builder
@@ -38,7 +35,7 @@ func Home(c *gin.Context) {
 	data := gin.H{
 		"vlist":      template.HTML(video_temp.String()),
 		"label_list": template.HTML(labels),
-		"url":        core.Config.GetString("app.host") + "main.html?page=:page",
+		"url":        core.Config.GetString("app.host"),
 		"page":       page,
 		"page_count": page_count,
 	}
@@ -54,10 +51,7 @@ func Tag(c *gin.Context) {
 	if page < 1 {
 		page = 1
 	}
-	if id < 0 {
-		c.Redirect(http.StatusNotFound, "/404.html")
-		return
-	}
+
 	var Tag model.Label
 	result := core.Mysql.Where("id = ?", id).First(&Tag)
 	if result.Error != nil {
@@ -156,10 +150,12 @@ func Video(c *gin.Context) {
 	fillVideoList(&video_temp, videos)
 
 	labels := model.GetFormattedLabelList(video.ID, 0)
-
+	source := Encrypt(
+		"https://xgct-video.vzcdn.net/4244a3d1-227f-467c-a5d9-d4209ea7e270/1280x720/video.m3u8",
+		core.Config.GetString("app.secret"))
 	data := gin.H{
 		"Title":      video.Title,
-		"url":        "https://xgct-video.vzcdn.net/4244a3d1-227f-467c-a5d9-d4209ea7e270/1280x720/video.m3u8",
+		"source":     source,
 		"vlist":      template.HTML(video_temp.String()),
 		"label_list": template.HTML(labels),
 	}

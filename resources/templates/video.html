@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/img/ape.ico"/>
-    <title>PinayPorn- Best Pinay Sex Videos of apebt.com | {{.Title}}</title>
+    <title>{{.Title}} | PinayPorn</title>
     <meta name="description"
           content="Watch the best PinayPorn Sex Videos at apebt Sex Scandals. There are thousands of Filipina homemade porn videos videos here.">
     <!--facebook-->
@@ -19,6 +19,7 @@
     <link href="/static/videojs.css" rel="stylesheet">
     <script src="/static/video.js"></script>
     <script src="/static/app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
 </head>
 <body>
 <div id="root" class="middle-flex">
@@ -28,7 +29,7 @@
                 <img class="logo" src="/img/ape.png"/>
                 <h1>apeBT</h1>
             </a>
-            <div class="search middle-flex">
+            <div id="search" class="search middle-flex">
                 <input placeholder="Search"/>
                 <div class="search-button">
                     <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24"
@@ -66,14 +67,18 @@
 </div>
 </body>
 <script>
-    const player = videojs('video', {
+    document.addEventListener("DOMContentLoaded", function() {
+        new Pagination(document.getElementById("page"),{{.page_count}}, {{.page}}).format({{.url}}).make();
+        new stream({{.source}});
+    });
+    /*const player = videojs('video', {
         sources: [{
             src: {{.url}},
             type: 'application/x-mpegURL',
         }],
         autoplay: false
     }, function onPlayerReady() {
-        videojs.log('播放器准备好了!');
+        videojs.log('playing now ...');
     });
     document.addEventListener('visibilitychange', function () {
         if (document.visibilityState === 'hidden') {
@@ -81,7 +86,7 @@
         } else {
             player.play();
         }
-    });
+    });*/
 </script>
 {{.footer}}
 </html>

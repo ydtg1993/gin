@@ -2,6 +2,7 @@ app:
   name: MyGoApp
   version: 1.0
   host: http://127.0.0.1:8081/
+  secret: hwWe\mS2`kvu8,z/|hvop7^~)ZUgQhHT
 
 mysql:
   host: 127.0.0.1

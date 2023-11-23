@@ -176,5 +176,26 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         };
         new w.search();
+
+        w.stream = class {
+            constructor(source) {
+                async function AESDecrypt(ciphertext, key) {
+                    try {
+                        const cipherText = Uint8Array.from(atob(ciphertext), c => c.charCodeAt(0));
+
+                        const importedKey = await crypto.subtle.importKey('raw', new TextEncoder().encode(key), 'AES-CBC', false, ['decrypt']);
+                        const decrypted = await crypto.subtle.decrypt({ name: 'AES-CBC', iv: cipherText.slice(0, 16) }, importedKey, cipherText.slice(16));
+
+                        // 减去 padding
+                        const paddingLength = decrypted[decrypted.length - 1];
+                        console.log(new TextDecoder().decode(decrypted.slice(0, -paddingLength)));
+                    } catch (err) {
+                        console.error('aes decrypt err:', err);
+                        return '';
+                    }
+                }
+                AESDecrypt(source, "hwWe\\mS2`kvu8,z/|hvop7^~)ZUgQhHT").then(plaintext => console.log('解密结果：', plaintext));
+            }
+        }
     })(window);
 });

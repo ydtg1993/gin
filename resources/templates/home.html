@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/img/ape.ico"/>
-    <title>PinayPorn- Best Pinay Sex Videos of apebt.com | APEBT</title>
+    <title>APEBT - Best Pinay Sex Videos of apebt.com | PinayPorn</title>
     <meta name="description"
           content="Watch the best PinayPorn Sex Videos at apebt Sex Scandals. There are thousands of Filipina homemade porn videos videos here.">
     <!--facebook-->
@@ -92,13 +92,19 @@
         </div>
     </div>
     <div class="middle-flex">
-        <div class="center"></div>
+        <div class="center">
+            <ul id="bottom-nav">
+                <li><a role="menuitem" href="{{.url}}">Home</a></li>
+                <li><a rel="privacy-policy" href="{{.url}}" aria-current="page" role="menuitem">Privacy Policy</a></li>
+                <li><a href="{{.url}}sitemap.xml" role="menuitem">SiteMap</a></li>
+            </ul>
+        </div>
     </div>
 </div>
 </body>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        new Pagination(document.getElementById("page"),{{.page_count}}, {{.page}}).format({{.url}}).make();
+        new Pagination(document.getElementById("page"),{{.page_count}}, {{.page}}).format("{{.url}}"+"main.html?page=:page").make();
     });
 </script>
 </html>
