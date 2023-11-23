@@ -4,6 +4,7 @@ app:
   host: http://127.0.0.1:8081/
   hash: EpDYiCD/2g4L2Id0nZKbcroQyRb0qDaf
   token: 26e67818dfa848c2
+  port: 8080
 
 mysql:
   host: 127.0.0.1

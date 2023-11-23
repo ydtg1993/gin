@@ -30,5 +30,5 @@ func main() {
 		middleware.RequestDataSizeMiddleware(1024))
 	g = router.ApiRouter(g)
 	g = router.WebRouter(g)
-	g.Run(":8081")
+	g.Run(":" + core.Config.GetString("app.port"))
 }
