@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    (function (w) {
+    (function (w,crypto,videojs) {
         w.parseParams = function (uri, params) {
             let paramsArray = [];
             if (Object.keys(params).length === 0) return uri;
@@ -229,5 +229,5 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         };
         new w.logger();
-    })(window);
+    })(window,crypto,videojs);
 });
