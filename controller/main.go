@@ -93,7 +93,7 @@ func Tag(c *gin.Context) {
 		<span>%s</span>
 	</header>
 </a></article>
-`, vl.Video.ID, vl.Video.Title, "https://sta.anicdn.com/playerImg/8.jpg", vl.Video.Title, vl.Video.Title, vl.Video.Title)
+`, vl.Video.ID, vl.Video.Title, vl.Video.Cover, vl.Video.Title, vl.Video.Title, vl.Video.Title)
 		video_temp.WriteString(temp)
 	}
 	labels := model.GetFormattedLabelList(0, uint(id))
@@ -151,7 +151,7 @@ func Video(c *gin.Context) {
 
 	labels := model.GetFormattedLabelList(video.ID, 0)
 	source, _ := Encrypt(
-		"https://xgct-video.vzcdn.net/4244a3d1-227f-467c-a5d9-d4209ea7e270/1280x720/video.m3u8",
+		video.URL,
 		core.Config.GetString("app.hash"), core.Config.GetString("app.token"))
 	data := gin.H{
 		"Title":      video.Title,
@@ -174,7 +174,7 @@ func fillVideoList(video_temp *strings.Builder, videos []model.Video) {
 		<span>%s</span>
 	</header>
 </a></article>
-`, video.ID, video.Title, "https://sta.anicdn.com/playerImg/8.jpg", video.Title, video.Title, video.Title)
+`, video.ID, video.Title, video.Cover, video.Title, video.Title, video.Title)
 		video_temp.WriteString(temp)
 	}
 }

@@ -15,13 +15,12 @@ func WebRouter(g *gin.Engine) *gin.Engine {
 	g.Static("/img", "resources/img")
 	route := g.Group("/")
 	{
-		route.GET("/main.html", controller.Home)
+		route.GET("/main.html", middleware.CacheHTMLMiddleware(8*time.Hour, "page"), controller.Home)
 		route.GET("/", func(c *gin.Context) {
 			c.Redirect(http.StatusTemporaryRedirect, "/main.html")
 		})
-		//route.GET("/video/:id/detail.html", middleware.CacheHTMLMiddleware(5*time.Minute) ,controller.Video)
-		route.GET("/video/:id/detail.html", controller.Video)
-		route.GET("/tag/:id/index.html", middleware.CacheHTMLMiddleware(5*time.Minute, "page"), controller.Tag)
+		route.GET("/video/:id/detail.html", middleware.CacheHTMLMiddleware(8*time.Hour), controller.Video)
+		route.GET("/tag/:id/index.html", middleware.CacheHTMLMiddleware(8*time.Hour, "page"), controller.Tag)
 		route.GET("/search", controller.Search)
 
 		route.GET("/robots.txt", func(c *gin.Context) {
