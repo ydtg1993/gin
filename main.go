@@ -13,7 +13,6 @@ import (
 )
 
 func main() {
-	gin.SetMode("debug")
 	g := gin.New()
 	g.NoRoute(func(c *gin.Context) {
 		staticContent, _ := ioutil.ReadFile("resources/templates/static.html")
