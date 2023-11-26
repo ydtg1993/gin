@@ -73,5 +73,13 @@
         new Pagination(document.getElementById("page"),{{.page_count}}, {{.page}}).format({{.url}}).make();
     });
 </script>
-{{.footer}}
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DHZ6D4256M"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-DHZ6D4256M');
+</script>
 </html>
