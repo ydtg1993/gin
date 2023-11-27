@@ -33,12 +33,20 @@ Sitemap: https://www.apebt.com/sitemap.xml
 			c.String(200, robotsTxtContent)
 		})
 		route.GET("/sitemap.xml", func(c *gin.Context) {
-			sitemapContent, err := ioutil.ReadFile("resources/site.xml")
+			sitemapContent, err := ioutil.ReadFile("resources/sitemap.xml")
 			if err != nil {
 				return
 			}
 			c.Header("Content-Type", "application/xml")
 			c.Data(http.StatusOK, "application/xml", sitemapContent)
+		})
+		route.GET("/BingSiteAuth.xml", func(c *gin.Context) {
+			siteContent, err := ioutil.ReadFile("resources/BingSiteAuth.xml")
+			if err != nil {
+				return
+			}
+			c.Header("Content-Type", "application/xml")
+			c.Data(http.StatusOK, "application/xml", siteContent)
 		})
 	}
 
