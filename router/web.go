@@ -1,7 +1,6 @@
 package router
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
@@ -38,7 +37,6 @@ Sitemap: https://www.apebt.com/sitemap.xml
 			if err != nil {
 				return
 			}
-			fmt.Println("Sitemap Content:", string(sitemapContent))
 			c.Header("Content-Type", "application/xml")
 			c.Data(http.StatusOK, "application/xml", sitemapContent)
 		})

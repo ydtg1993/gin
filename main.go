@@ -14,6 +14,7 @@ import (
 
 func main() {
 	g := gin.New()
+	g.SetTrustedProxies(nil)
 	g.NoRoute(func(c *gin.Context) {
 		staticContent, _ := ioutil.ReadFile("resources/templates/static.html")
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
