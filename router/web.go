@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
+	"path/filepath"
 	"time"
 	"xo/controller"
 	"xo/middleware"
@@ -32,21 +33,20 @@ Sitemap: https://www.apebt.com/sitemap.xml
 		`
 			c.String(200, robotsTxtContent)
 		})
-		route.GET("/sitemap.xml", func(c *gin.Context) {
-			siteContent, err := ioutil.ReadFile("resources/sitemap.xml")
+		route.GET("/:file", func(c *gin.Context) {
+			file := c.Param("file")
+			fileContent, err := ioutil.ReadFile("resources/" + file)
 			if err != nil {
 				return
 			}
-			c.Header("Content-Type", "application/xml")
-			c.Data(http.StatusOK, "application/xml", siteContent)
-		})
-		route.GET("/BingSiteAuth.xml", func(c *gin.Context) {
-			siteContent, err := ioutil.ReadFile("resources/BingSiteAuth.xml")
-			if err != nil {
-				return
+			extension := filepath.Ext(file)
+
+			switch extension {
+			case ".xml":
+				c.Data(http.StatusOK, "application/xml", fileContent)
+			default:
+				c.Data(http.StatusOK, "text/plain; charset=utf-8", fileContent)
 			}
-			c.Header("Content-Type", "application/xml")
-			c.Data(http.StatusOK, "application/xml", siteContent)
 		})
 	}
 
