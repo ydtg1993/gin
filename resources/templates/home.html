@@ -17,7 +17,7 @@
     <meta property="og:url" content="https://kantotin.com/tag/pinaypie/">
     <meta property="og:site_name" content="Pinay Sex Scandal - Watch Porn Sex Videos Online | APEBT">
     <link rel="stylesheet" media="all" href="/static/app.css">
-    <script src="/static/app.js"></script>
+    <script src="/static/app.min.js"></script>
 </head>
 <body>
 <div id="root" class="middle-flex">
@@ -105,7 +105,7 @@
 </body>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        new Pagination(document.getElementById("page"),{{.page_count}}, {{.page}}).format("{{.url}}"+"main.html?page=:page").make();
+        new Pagination(document.getElementById("page"),{{.page_count}}, {{.page}}).visiblePageCount(7).format("{{.url}}"+"main.html?page=:page").make();
     });
 </script>
 <!-- Google tag (gtag.js) -->
