@@ -39,6 +39,7 @@ func Home(c *gin.Context) {
 		"page":       page,
 		"page_count": page_count,
 	}
+	//log.Println(data)
 	c.HTML(http.StatusOK, "home.html", data)
 }
 
